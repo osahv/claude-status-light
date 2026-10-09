@@ -12,6 +12,7 @@ for arch in arm64 x86_64; do
 done
 lipo -create "$TMP"/ClaudeStatus-* -output "$APP/Contents/MacOS/ClaudeStatus"
 cp "$HERE/bin/report.sh" "$APP/Contents/Resources/report.sh"
+cp "$HERE/assets/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"   # redraw with: swift scripts/icon.swift assets/AppIcon.icns
 cat > "$APP/Contents/Info.plist" <<PL
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -19,6 +20,7 @@ cat > "$APP/Contents/Info.plist" <<PL
 <key>CFBundleName</key><string>ClaudeStatus</string>
 <key>CFBundleIdentifier</key><string>local.claude-status-light</string>
 <key>CFBundleExecutable</key><string>ClaudeStatus</string>
+<key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleShortVersionString</key><string>$VERSION</string>
 <key>CFBundleVersion</key><string>$VERSION</string>

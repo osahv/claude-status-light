@@ -1,3 +1,5 @@
+<img src="assets/icon.png" width="128" alt="ClaudeStatus icon">
+
 # ClaudeStatus
 
 A traffic light for [Claude Code](https://code.claude.com) in the macOS menu bar. One dot shows how all your Claude Code sessions are doing:
