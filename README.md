@@ -27,7 +27,7 @@ Works with everything that runs Claude Code hooks: the `claude` CLI, the **Code*
 
 ### Option A: download
 
-1. Download `ClaudeStatus.zip` from Releases, unzip it, move `ClaudeStatus.app` to `/Applications` (or `~/Applications`).
+1. Download **[ClaudeStatus.zip](https://github.com/osahv/claude-status-light/releases/latest/download/ClaudeStatus.zip)** (not the green “Code → Download ZIP” button, that is the source code), unzip it, move `ClaudeStatus.app` to `/Applications` (or `~/Applications`).
 2. The app is not notarized by Apple, so the first launch is blocked. Either right-click the app → **Open** → **Open**, or (macOS 15+) try to open it once, then go to **System Settings → Privacy & Security** and click **Open Anyway**. Or in Terminal:
    ```bash
    xattr -d com.apple.quarantine /Applications/ClaudeStatus.app
@@ -89,7 +89,7 @@ MIT, see [LICENSE](LICENSE).
 
 Потрібна macOS 13 або новіша.
 
-**Завантажити.** Завантажте `ClaudeStatus.zip` з Releases, розпакуйте, перенесіть `ClaudeStatus.app` у «Програми». Застосунок не нотаризований Apple, тому перший запуск заблоковано: правий клік на застосунку → **Відкрити** → **Відкрити**, або (macOS 15+) спробуйте відкрити, потім **Системні параметри → Приватність і безпека → Усе одно відкрити**. Або в Терміналі:
+**Завантажити.** Завантажте **[ClaudeStatus.zip](https://github.com/osahv/claude-status-light/releases/latest/download/ClaudeStatus.zip)** (не зелену кнопку «Code → Download ZIP», там лише вихідний код), розпакуйте, перенесіть `ClaudeStatus.app` у «Програми». Застосунок не нотаризований Apple, тому перший запуск заблоковано: правий клік на застосунку → **Відкрити** → **Відкрити**, або (macOS 15+) спробуйте відкрити, потім **Системні параметри → Приватність і безпека → Усе одно відкрити**. Або в Терміналі:
 
 ```bash
 xattr -d com.apple.quarantine /Applications/ClaudeStatus.app
