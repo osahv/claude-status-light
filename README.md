@@ -1,4 +1,4 @@
-<img src="assets/icon.png" width="128" alt="ClaudeStatus icon">
+<img src="assets/icon.png" width="128" alt="ClaudeStatus icon"> <img src="assets/dot.png" alt="green dot in the menu bar">
 
 # ClaudeStatus
 
@@ -12,6 +12,8 @@ A traffic light for [Claude Code](https://code.claude.com) in the macOS menu bar
 | red, blinking | the turn failed (API error, rate limit…) |
 
 With several sessions the worst one wins. Click the dot to see every session, its project folder and how long it has been in that state.
+
+<img src="assets/menu.png" width="420" alt="ClaudeStatus menu">
 
 Works with everything that runs Claude Code hooks: the `claude` CLI, the **Code** tab of the Claude desktop app, and the VS Code / JetBrains extensions. Plain chats on claude.ai don't run hooks and aren't shown.
 
@@ -76,6 +78,8 @@ MIT, see [LICENSE](LICENSE).
 | красная, мигает | ход завершился ошибкой (ошибка API, лимит…) |
 
 Если сессий несколько, показывается самая тревожная. По клику видно все сессии, папку проекта и сколько времени сессия в этом состоянии.
+
+<img src="assets/menu.png" width="420" alt="Меню ClaudeStatus">
 
 Работает со всем, что запускает хуки Claude Code: CLI `claude`, вкладка **Code** в приложении Claude для компьютера, расширения для VS Code и JetBrains. Обычные чаты на claude.ai хуки не запускают и не отображаются.
 
