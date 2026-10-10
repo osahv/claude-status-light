@@ -1,7 +1,7 @@
 #!/bin/bash
 # Claude Code hook -> status file for the menu bar light. Pure bash builtins: no python, no jq, no extra processes.
 # Usage (from a hook): report.sh working|attention|error|idle|end    (hook JSON on stdin)
-# Writes ~/.claude-status/<session_id> as one line "state|project|event"; "end" removes it. Silent, never fails.
+# Writes ~/.claude-status/<session_id> as one line "state|project|event|pid"; "end" removes it. Silent, never fails.
 state="${1:-idle}"
 dir="${CLAUDE_STATUS_DIR:-$HOME/.claude-status}"
 read -r -d '' json                                   # whole stdin, builtin (returns non-zero at EOF, that is fine)
@@ -26,5 +26,6 @@ Stop)
         case "$msg" in *\?|*'? '*|*'?\n'*|*'?**'*|*'?)'*) state=attention; ev="Stop:question";; esac;;
     esac;;
 esac
-printf '%s|%s|%s\n' "$state" "${cwd##*/}" "${ev:0:40}" > "$dir/$sid" 2>/dev/null
+# 4th field: the hook's parent (Claude Code, or a shell right under it); the app looks there for background commands.
+printf '%s|%s|%s|%s\n' "$state" "${cwd##*/}" "${ev:0:40}" "$PPID" > "$dir/$sid" 2>/dev/null
 exit 0

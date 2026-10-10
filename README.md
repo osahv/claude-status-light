@@ -11,6 +11,8 @@ A traffic light for [Claude Code](https://code.claude.com) in the macOS menu bar
 | yellow, blinking | Claude is waiting for you: a permission prompt, a question dialog, a plan to approve, or a reply that ends with a question |
 | red, blinking | the turn failed (API error, rate limit…) |
 
+A background command started by Claude (`run_in_background`, e.g. a long build) keeps the dot green until it exits.
+
 With several sessions the worst one wins. Click the dot to see every session, its project folder and how long it has been in that state.
 
 <img src="assets/menu.png" width="420" alt="ClaudeStatus menu">
@@ -76,6 +78,8 @@ MIT, see [LICENSE](LICENSE).
 | зелена | Claude працює |
 | жовта, блимає | Claude чекає на вас: дозвіл, питання з варіантами, план на схвалення або відповідь із питанням наприкінці |
 | червона, блимає | хід завершився помилкою (помилка API, ліміт…) |
+
+Фонова команда, яку запустив Claude (`run_in_background`, наприклад довга збірка), тримає крапку зеленою, доки не завершиться.
 
 Якщо сесій кілька, показується найтривожніша. Після кліку видно всі сесії, теку проєкту і скільки часу сесія в цьому стані.
 

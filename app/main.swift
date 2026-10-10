@@ -3,7 +3,7 @@ import CoreServices
 
 // Claude status light: a coloured dot in the menu bar for all running Claude Code sessions.
 // grey = idle, green = working, yellow = needs you, red = something went wrong (worst session wins).
-// State: one file per session in ~/.claude-status ("state|project|event", mtime = last news),
+// State: one file per session in ~/.claude-status ("state|project|event|pid", mtime = last news),
 // written by bin/report.sh from Claude Code hooks.
 // Cheap by design: no polling. FSEvents wakes the app only when a file changes, the blink timer
 // exists only while a session needs attention, one slow timer drops dead sessions.
@@ -15,6 +15,8 @@ struct Session {
     var project: String
     var level: Level
     var ts: Double
+    var pid: pid_t = 0           // Claude Code process (from the hook), for finding background commands
+    var background = false       // green only because a background command is still running
 }
 
 let stateDir = ProcessInfo.processInfo.environment["CLAUDE_STATUS_DIR"]
@@ -44,7 +46,8 @@ func readSessions() -> [Session] {
         default: level = .idle
         }
         if level == .working && now - mtime > staleWorking { level = .idle }
-        out.append(Session(id: n, project: f[1].isEmpty ? "?" : f[1], level: level, ts: mtime))
+        out.append(Session(id: n, project: f[1].isEmpty ? "?" : f[1], level: level, ts: mtime,
+                           pid: f.count >= 4 ? pid_t(f[3].trimmingCharacters(in: .whitespacesAndNewlines)) ?? 0 : 0))
     }
     return out.sorted { $0.level.rawValue != $1.level.rawValue ? $0.level.rawValue > $1.level.rawValue : $0.ts > $1.ts }
 }
@@ -102,6 +105,7 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var blinkDim = false
     var stream: FSEventStreamRef?
     var pending = false
+    var exitWatches: [pid_t: DispatchSourceProcess] = [:]   // background commands we are waiting on
     let defaults = UserDefaults.standard
 
     var notifyOn: Bool { defaults.object(forKey: "notify") as? Bool ?? true }
@@ -149,7 +153,16 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func refresh() {
-        let new = readSessions()
+        var new = readSessions()
+        // A stopped turn with a background command still running counts as working; the kernel tells us
+        // when that command exits (no timer), and then we look again.
+        for i in new.indices where new[i].level == .idle {
+            let bg = backgroundShells(new[i].pid)
+            if bg.isEmpty { continue }
+            new[i].level = .working
+            new[i].background = true
+            bg.forEach(watchExit)
+        }
         for s in new where (s.level == .attention || s.level == .error) && lastLevels[s.id] != s.level { notify(s) }
         lastLevels = Dictionary(new.map { ($0.id, $0.level) }, uniquingKeysWith: { a, _ in a })
         sessions = new
@@ -171,6 +184,18 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
+    func watchExit(_ pid: pid_t) {
+        if exitWatches[pid] != nil { return }
+        let src = DispatchSource.makeProcessSource(identifier: pid, eventMask: .exit, queue: .main)
+        src.setEventHandler { [weak self] in
+            src.cancel()
+            self?.exitWatches[pid] = nil
+            self?.scheduleRefresh()
+        }
+        exitWatches[pid] = src
+        src.resume()
+    }
+
     func notify(_ s: Session) {
         if soundOn { NSSound(named: NSSound.Name(s.level == .error ? "Basso" : "Glass"))?.play() }
         guard notifyOn else { return }
@@ -189,7 +214,8 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
         m.addItem(head)
         let now = Date().timeIntervalSince1970
         for s in sessions {
-            let it = NSMenuItem(title: "\(s.project) — \(label(s.level)) (\(ago(now - s.ts)))", action: nil, keyEquivalent: "")
+            let state = s.background ? "working in background" : label(s.level)
+            let it = NSMenuItem(title: "\(s.project) — \(state) (\(ago(now - s.ts)))", action: nil, keyEquivalent: "")
             it.image = dots[s.level.rawValue][0]
             it.isEnabled = false
             m.addItem(it)
